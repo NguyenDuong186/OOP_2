@@ -32,6 +32,9 @@ public class Person extends Entity{
 		super(identifier, name, describe);
 		// TODO Auto-generated constructor stub
 	}
+	public Person() {
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	public String toString() {
 		return "Person [name:"+this.getName()+",identifier:"+this.getIdentifier()+",describe:"+this.getDescribe()+"dob:" + dob + ", profession:" + profession + ", nationality:" + nationality + "]";

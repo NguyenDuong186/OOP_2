@@ -1,5 +1,6 @@
 package connection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.orientechnologies.orient.core.record.OVertex;
@@ -17,4 +18,6 @@ public interface LocationDAO {
 	public Location getLocation(String id);
 
 	public List<Location> listLocation();
+	
+	public void addListLocation(ArrayList<Location> l);
 }

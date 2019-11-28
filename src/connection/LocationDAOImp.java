@@ -59,6 +59,7 @@ public class LocationDAOImp implements LocationDAO{
 		result.setProperty("identifier", identifier);
 		result.setProperty("name", name);
 		result.setProperty("describe", describe);
+		result.save();
 		db.close();
 		return result;
 	}
@@ -72,7 +73,7 @@ public class LocationDAOImp implements LocationDAO{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "DELETE VERTEX Location WHERE identificer = " + "?";
+		String query = "DELETE VERTEX Location WHERE identifier = " + "?";
 		OResultSet rs = db.query(query, id);
 		rs.close();
 		db.close();
@@ -88,13 +89,13 @@ public class LocationDAOImp implements LocationDAO{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "SELECT * FROM Location WHERE identifier = " + "?";
-		OResultSet rs = db.query(query, id);
-		OResult item = rs.next();
+		String query = "SELECT * FROM Location WHERE identifier = '" +id+ "'";
+		OResultSet rs = db.query(query);
 		Location location = null;
-		while (item != null) {
+		while (rs.hasNext()) {
+			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			
 
@@ -120,7 +121,7 @@ public class LocationDAOImp implements LocationDAO{
 		while (rs.hasNext()) {
 			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			
 			list.add(new Location(iden, name, des));
@@ -128,6 +129,25 @@ public class LocationDAOImp implements LocationDAO{
 		rs.close();
 		db.close();
 		return list;
+	}
+
+	@Override
+	public void addListLocation(ArrayList<Location> l) {
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < l.size(); i++) {
+			OVertex result = db.newVertex("Person");
+			result.setProperty("identifier", l.get(i).getIdentifier());
+			result.setProperty("name", l.get(i).getName());
+			result.setProperty("describe", l.get(i).getDescribe());
+			result.setProperty("link", l.get(i).getLink());
+			result.save();
+		}
+		db.close();
 	}
 
 }

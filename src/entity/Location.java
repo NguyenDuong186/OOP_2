@@ -7,6 +7,10 @@ public class Location extends Entity{
 		// TODO Auto-generated constructor stub
 	}
 
+	public Location() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public String toString() {
 		return "Location [name:"+this.getName()+",identifier:"+this.getIdentifier()+",describe:"+this.getDescribe()+"]";

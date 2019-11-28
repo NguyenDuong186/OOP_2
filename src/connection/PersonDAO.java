@@ -1,5 +1,6 @@
 package connection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.orientechnologies.orient.core.record.OVertex;
@@ -13,4 +14,6 @@ public interface PersonDAO {
 	public void deletePerson(String id);
 	public Person getPerson(String id);
 	public List<Person> listPerson();
+	public OVertex getVertexPerson(String id);
+	public void addListPerson(ArrayList<Person> l);
 }

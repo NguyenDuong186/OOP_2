@@ -1,5 +1,6 @@
 package connection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.orientechnologies.orient.core.record.OVertex;
@@ -20,4 +21,6 @@ public interface CountryDAO {
 	public Country getCountry(String id);
 
 	public List<Country> listCountry();
+	
+	public void addListCountry(ArrayList<Country> l);
 }

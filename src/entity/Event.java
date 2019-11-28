@@ -12,6 +12,10 @@ public class Event extends Entity{
 		// TODO Auto-generated constructor stub
 	}
 
+	public Event() {
+		// TODO Auto-generated constructor stub
+	}
+
 	
 	
 }

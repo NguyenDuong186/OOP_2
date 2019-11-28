@@ -12,4 +12,8 @@ public class Time extends Entity{
 		// TODO Auto-generated constructor stub
 	}
 
+	public Time() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

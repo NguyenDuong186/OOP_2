@@ -11,14 +11,13 @@ import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 
-import entity.Country;
 import entity.Event;
 
-public class EventDAOImp implements EventDAO{
+public class EventDAOImp implements EventDAO {
 
 	@Override
 	public void createSchema() {
-		
+
 		ODatabaseSession db = null;
 		try {
 			db = orientdbConnection.getConnection();
@@ -42,9 +41,9 @@ public class EventDAOImp implements EventDAO{
 			event.createProperty("describe", OType.STRING);
 			event.createIndex("event_describe_index", OClass.INDEX_TYPE.UNIQUE, "describe");
 		}
-		
+
 		db.close();
-		
+
 	}
 
 	@Override
@@ -53,13 +52,13 @@ public class EventDAOImp implements EventDAO{
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		OVertex result = db.newVertex("Event");
 		result.setProperty("identifier", identifier);
 		result.setProperty("name", name);
 		result.setProperty("describe", describe);
+		result.save();
 		db.close();
 		return result;
 	}
@@ -70,14 +69,13 @@ public class EventDAOImp implements EventDAO{
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "DELETE VERTEX Event WHERE identificer = " + "?";
+		String query = "DELETE VERTEX Event WHERE identifier = " + "?";
 		OResultSet rs = db.query(query, id);
 		rs.close();
 		db.close();
-		
+
 	}
 
 	@Override
@@ -86,18 +84,16 @@ public class EventDAOImp implements EventDAO{
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String query = "SELECT * FROM Event WHERE identifier = " + "?";
 		OResultSet rs = db.query(query, id);
-		OResult item = rs.next();
 		Event event = null;
-		while (item != null) {
+		while (rs.hasNext()) {
+			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
-			
 
 			event = new Event(iden, name, des);
 		}
@@ -121,14 +117,34 @@ public class EventDAOImp implements EventDAO{
 		while (rs.hasNext()) {
 			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
-			
+
 			list.add(new Event(iden, name, des));
 		}
 		rs.close();
 		db.close();
 		return list;
+	}
+
+	@Override
+	public void addListEvent(ArrayList<Event> l) {
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < l.size(); i++) {
+			OVertex result = db.newVertex("Person");
+			result.setProperty("identifier", l.get(i).getIdentifier());
+			result.setProperty("name", l.get(i).getName());
+			result.setProperty("describe", l.get(i).getDescribe());
+			result.setProperty("link", l.get(i).getLink());
+			result.save();
+		}
+		db.close();
+
 	}
 
 }

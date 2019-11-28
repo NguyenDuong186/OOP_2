@@ -58,10 +58,11 @@ public class OrganizationDAOImp implements OrganizationDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OVertex result = db.newVertex("Person");
+		OVertex result = db.newVertex("Organization");
 		result.setProperty("identifier", identifier);
 		result.setProperty("name", name);
 		result.setProperty("describe", describe);
+		result.save();
 		db.close();
 		return result;
 	}
@@ -75,11 +76,12 @@ public class OrganizationDAOImp implements OrganizationDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OVertex result = db.newVertex("Person");
+		OVertex result = db.newVertex("Organization");
 		result.setProperty("identifier", identifier);
 		result.setProperty("name", name);
 		result.setProperty("describe", describe);
 		result.setProperty("headquarters", headquarters);
+		result.save();
 		db.close();
 		return result;
 	}
@@ -93,7 +95,7 @@ public class OrganizationDAOImp implements OrganizationDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "DELETE VERTEX Organization WHERE identificer = " + "?";
+		String query = "DELETE VERTEX Organization WHERE identifier = " + "?";
 		OResultSet rs = db.query(query, id);
 		rs.close();
 		db.close();
@@ -111,11 +113,11 @@ public class OrganizationDAOImp implements OrganizationDAO {
 		}
 		String query = "SELECT * FROM Organization WHERE identifier = " + "?";
 		OResultSet rs = db.query(query, id);
-		OResult item = rs.next();
 		Organization org = null;
-		while (item != null) {
+		while (rs.hasNext()) {
+			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			String headquarters = item.getProperty("headquarters");
 			org = new Organization(iden, name, des,headquarters);
@@ -140,7 +142,7 @@ public class OrganizationDAOImp implements OrganizationDAO {
 		while (rs.hasNext()) {
 			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			String headquarters = item.getProperty("headquarters");
 			list.add(new Organization(iden, name, des,headquarters));
@@ -148,6 +150,24 @@ public class OrganizationDAOImp implements OrganizationDAO {
 		rs.close();
 		db.close();
 		return list;
+	}
+
+	@Override
+	public void addListOrganization(ArrayList<Organization> l) {
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < l.size(); i++) {
+			OVertex result = db.newVertex("Person");
+			result.setProperty("identifier", l.get(i).getIdentifier());
+			result.setProperty("name", l.get(i).getName());
+			result.setProperty("describe", l.get(i).getDescribe());
+			result.setProperty("link", l.get(i).getLink());
+			result.save();
+		}
 	}
 
 }

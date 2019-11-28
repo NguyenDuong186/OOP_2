@@ -4,6 +4,13 @@ public class Entity {
 	private String identifier;
 	private String name;
 	private String describe;
+	private String link;
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -23,6 +30,9 @@ public class Entity {
 		this.identifier = identifier;
 		this.name = name;
 		this.describe = describe;
+	}
+	public Entity() {
+		// TODO Auto-generated constructor stub
 	}
 	public void setDescribe(String describe) {
 		this.describe = describe;

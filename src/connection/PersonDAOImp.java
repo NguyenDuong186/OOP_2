@@ -3,12 +3,14 @@ package connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
@@ -82,12 +84,10 @@ public class PersonDAOImp implements PersonDAO {
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "DELETE VERTEX Person WHERE identificer = " + "?";
-		OResultSet rs = db.query(query, id);
-
+		String query = "DELETE VERTEX Person WHERE identifier = ?";
+		OResultSet rs =  db.query(query,id);
 		rs.close();
 		db.close();
 	}
@@ -98,7 +98,6 @@ public class PersonDAOImp implements PersonDAO {
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String query = "SELECT * FROM Person WHERE identifier = '" + id+"'";
@@ -126,7 +125,6 @@ public class PersonDAOImp implements PersonDAO {
 		try {
 			db = (ODatabaseSession) orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String query = "SELECT * FROM Person ";
@@ -135,7 +133,7 @@ public class PersonDAOImp implements PersonDAO {
 		while (rs.hasNext()) {
 			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			String dob = item.getProperty("dob").toString();
 			String profession = item.getProperty("profession");
@@ -165,9 +163,57 @@ public class PersonDAOImp implements PersonDAO {
 				result.setProperty("dob", dob);
 				result.setProperty("profession", profession);
 				result.setProperty("nationality", nationality);
+				result.save();
+				db.close();
 				return result;
 			}
-	
+
+	@Override
+	public OVertex getVertexPerson(String id) {
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		String query = "SELECT * FROM Person WHERE identifier='"+id+"'";
+		OResultSet resultSet = db.query(query);
+		OVertex from = null;
+		        if (resultSet.hasNext())
+		        {
+		            OResult result = resultSet.next();
+		            OElement element = result.toElement();
+		            Optional<OVertex> optional = element.asVertex();
+		            if(optional.isPresent()) 
+		                from = optional.get();
+		        }
+		        
+		resultSet.close();
+		db.close();
+		return from;
+	}
+//	
+	@Override
+	public void addListPerson(ArrayList<Person> l) {
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		for(int i=0;i<l.size();i++) {
+			OVertex result = db.newVertex("Person");
+			result.setProperty("identifier", l.get(i).getIdentifier());
+			result.setProperty("name", l.get(i).getName());
+			result.setProperty("describe", l.get(i).getDescribe());
+			result.setProperty("dob", l.get(i).getDob());
+			result.setProperty("link", l.get(i).getLink());
+			result.setProperty("profession", l.get(i).getProfession());
+			result.setProperty("nationality", l.get(i).getNationality());
+			
+			result.save();
+		}
+	}
 
 	
 

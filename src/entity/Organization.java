@@ -1,6 +1,9 @@
 package entity;
 
-public class Organization extends Entity{
+public class Organization extends Entity {
+	
+	private String headquarters;
+	
 	public Organization(String identifier, String name, String describe, String headquarters) {
 		super(identifier, name, describe);
 		this.headquarters = headquarters;
@@ -11,7 +14,10 @@ public class Organization extends Entity{
 		// TODO Auto-generated constructor stub
 	}
 
-	private String headquarters;
+
+	public Organization() {
+		// TODO Auto-generated constructor stub
+	}
 
 	public String getHeadquarters() {
 		return headquarters;
@@ -20,6 +26,5 @@ public class Organization extends Entity{
 	public void setHeadquarters(String headquarters) {
 		this.headquarters = headquarters;
 	}
-	
 
 }

@@ -15,7 +15,7 @@ import entity.Country;
 import entity.Event;
 import entity.Time;
 
-public class TimeDAOIpm implements TimeDAO{
+public class TimeDAOImp implements TimeDAO{
 
 	@Override
 	public void createSchema() {
@@ -59,6 +59,7 @@ public class TimeDAOIpm implements TimeDAO{
 		result.setProperty("identifier", identifier);
 		result.setProperty("name", name);
 		result.setProperty("describe", describe);
+		result.save();
 		db.close();
 		return result;
 	}
@@ -72,7 +73,7 @@ public class TimeDAOIpm implements TimeDAO{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "DELETE VERTEX Time WHERE identificer = " + "?";
+		String query = "DELETE VERTEX Time WHERE identifier = " + "?";
 		OResultSet rs = db.query(query, id);
 		rs.close();
 		db.close();
@@ -89,11 +90,11 @@ public class TimeDAOIpm implements TimeDAO{
 		}
 		String query = "SELECT * FROM Time WHERE identifier = " + "?";
 		OResultSet rs = db.query(query, id);
-		OResult item = rs.next();
 		Time time = null;
-		while (item != null) {
+		while (rs.hasNext()) {
+			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			
 
@@ -119,12 +120,31 @@ public class TimeDAOIpm implements TimeDAO{
 		while (rs.hasNext()) {
 			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			list.add(new Time(iden, name, des));
 		}
 		rs.close();
 		db.close();
 		return list;
+	}
+
+	@Override
+	public void addListTime(ArrayList<Time> l) {
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < l.size(); i++) {
+			OVertex result = db.newVertex("Person");
+			result.setProperty("identifier", l.get(i).getIdentifier());
+			result.setProperty("name", l.get(i).getName());
+			result.setProperty("describe", l.get(i).getDescribe());
+			result.setProperty("link", l.get(i).getLink());
+			result.save();
+		}
+		
 	}
 }

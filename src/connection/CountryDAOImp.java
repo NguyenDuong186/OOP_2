@@ -12,7 +12,6 @@ import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
 
 import entity.Country;
-import entity.Organization;
 
 public class CountryDAOImp implements CountryDAO {
 
@@ -22,7 +21,6 @@ public class CountryDAOImp implements CountryDAO {
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		OClass country = db.getClass("Country");
@@ -45,9 +43,9 @@ public class CountryDAOImp implements CountryDAO {
 			country.createProperty("capital", OType.STRING);
 			country.createIndex("country_capital_index", OClass.INDEX_TYPE.UNIQUE, "capital");
 		}
-		if (country.getProperty("officialLanguages") == null) {
-			country.createProperty("officialLanguages", OType.STRING);
-			country.createIndex("country_officialLanguages_index", OClass.INDEX_TYPE.UNIQUE, "officialLanguages");
+		if (country.getProperty("officialLanguage") == null) {
+			country.createProperty("officialLanguage", OType.STRING);
+			country.createIndex("country_officialLanguage_index", OClass.INDEX_TYPE.UNIQUE, "officialLanguage");
 		}
 		if (country.getProperty("acreage") == null) {
 			country.createProperty("acreage", OType.STRING);
@@ -63,13 +61,13 @@ public class CountryDAOImp implements CountryDAO {
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		OVertex result = db.newVertex("Country");
 		result.setProperty("identifier", identifier);
 		result.setProperty("name", name);
 		result.setProperty("describe", describe);
+		result.save();
 		db.close();
 		return result;
 	}
@@ -81,34 +79,31 @@ public class CountryDAOImp implements CountryDAO {
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OVertex result = db.newVertex("Person");
+		OVertex result = db.newVertex("Country");
 		result.setProperty("identifier", identifier);
 		result.setProperty("name", name);
 		result.setProperty("describe", describe);
-		result.setProperty("capital", identifier);
-		result.setProperty("officialLanguages", name);
-		result.setProperty("acreage", describe);
+		result.setProperty("capital", capital);
+		result.setProperty("officialLanguage", officialLanguages);
+		result.setProperty("acreage", acreage);
+		result.save();
 		db.close();
 		return result;
 	}
 
 	@Override
 	public void deleteCountry(String id) {
-//		ODatabaseSession db = null;
-//		try {
-//			db = orientdbConnection.getConnection();
-//		} catch (ClassNotFoundException | SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		String query = "DELETE VERTEX Country WHERE identificer = " + "?";
-//		OResultSet rs = db.query(query, id);
-//		rs.close();
-//		db.close();
-
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		String query = "DELETE VERTEX Country WHERE identifier = ?" ;
+		OResultSet rs = db.query(query, id);
+		rs.close();
 	}
 
 	@Override
@@ -117,19 +112,18 @@ public class CountryDAOImp implements CountryDAO {
 		try {
 			db = orientdbConnection.getConnection();
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "SELECT * FROM Country WHERE identifier = " ;
+		String query = "SELECT * FROM Country WHERE identifier = '"+id+"'" ;
 		OResultSet rs = db.query(query);
-		OResult item = rs.next();
 		Country country = null;
-		while (item != null) {
+		while (rs.hasNext()) {
+			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			String capital = item.getProperty("capital");
-			String officialLanguages = item.getProperty("officialLanguages");
+			String officialLanguages = item.getProperty("officialLanguage");
 			String acreage = item.getProperty("acreage");
 
 			country = new Country(iden, name, des, capital, officialLanguages, acreage);
@@ -154,16 +148,40 @@ public class CountryDAOImp implements CountryDAO {
 		while (rs.hasNext()) {
 			OResult item = rs.next();
 			String iden = item.getProperty("identifier");
-			String name = item.getProperty("nam");
+			String name = item.getProperty("name");
 			String des = item.getProperty("describe");
 			String capital = item.getProperty("capital");
-			String officialLanguages = item.getProperty("officialLanguages");
+			String officialLanguages = item.getProperty("officialLanguage");
 			String acreage = item.getProperty("acreage");
 			list.add(new Country(iden, name, des, capital, officialLanguages, acreage));
 		}
 		rs.close();
 		db.close();
 		return list;
+	}
+
+	@Override
+	public void addListCountry(ArrayList<Country> l) {
+		ODatabaseSession db = null;
+		try {
+			db = orientdbConnection.getConnection();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		for(int i=0;i<l.size();i++) {
+			OVertex result = db.newVertex("Person");
+			result.setProperty("identifier", l.get(i).getIdentifier());
+			result.setProperty("name", l.get(i).getName());
+			result.setProperty("describe", l.get(i).getDescribe());
+			result.setProperty("capital", l.get(i).getCapital());
+			result.setProperty("link", l.get(i).getLink());
+			result.setProperty("acreage", l.get(i).getAcreage());
+			result.setProperty("officialLanguage", l.get(i).getOfficialLanguages());
+			
+			result.save();
+		}
+		db.close();
+		
 	}
 
 }
